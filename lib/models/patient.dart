@@ -1,10 +1,10 @@
 class Patient {
-  final String firstName;
-  final String lastName;
-  final String address;
-  final String dateOfBirth;
-  final String department;
-  final String doctor;
+  String firstName;
+  String lastName;
+  String address;
+  String dateOfBirth;
+  String department;
+  String doctor;
 
   Patient({
     required this.firstName,

@@ -1,11 +1,98 @@
 import 'package:flutter/material.dart';
 import '../../models/patient.dart';
+import 'package:patient_app/screens/services/api.services.dart';
+import 'package:patient_app/screens/patient/patient_lists_screen.dart';
 
 class PatientDetailScreen extends StatelessWidget {
   final Patient patient;
+  final APIService apiService = APIService();
 
-  const PatientDetailScreen({Key? key, required this.patient})
-      : super(key: key);
+  PatientDetailScreen({Key? key, required this.patient}) : super(key: key);
+
+  void _showDeleteDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (context) {
+        return Dialog(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
+          ),
+          child: Container(
+            padding: EdgeInsets.symmetric(horizontal: 16, vertical: 24),
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(12),
+              color: Colors.white,
+            ),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                const Text(
+                  'Are you sure you want to delete the patient?',
+                  style: TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                SizedBox(height: 16),
+                const Text(
+                  'This action is irreversible.',
+                  style: TextStyle(
+                    fontSize: 16,
+                  ),
+                ),
+                SizedBox(height: 24),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: [
+                    ElevatedButton(
+                      onPressed: () {
+                        Navigator.pop(context);
+                      },
+                      child: Text('Cancel'),
+                      style: ElevatedButton.styleFrom(
+                        primary: Colors.grey[300],
+                        textStyle: const TextStyle(
+                          color: Colors.black,
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ),
+                    ElevatedButton(
+                      onPressed: () async {
+                        // Delete the patient using the API service
+                        final result =
+                            await apiService.deletePatient(patient.id!);
+
+                        if (result == true) {
+                          // Navigate back to the patient list screen
+                          Navigator.popUntil(context, ModalRoute.withName('/'));
+                        } else {
+                          // Display an error message
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                                content: Text("Failed to delete the patient")),
+                          );
+                        }
+                      },
+                      child: Text('Delete'),
+                      style: ElevatedButton.styleFrom(
+                        primary: Colors.red,
+                        textStyle: const TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -44,9 +131,9 @@ class PatientDetailScreen extends StatelessWidget {
               ),
               const Divider(),
               ListTile(
-                title: Text(
+                title: const Text(
                   'Date of Birth',
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontSize: 18,
                     fontWeight: FontWeight.w500,
                   ),
@@ -58,9 +145,9 @@ class PatientDetailScreen extends StatelessWidget {
               ),
               const Divider(),
               ListTile(
-                title: Text(
+                title: const Text(
                   'Address',
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontSize: 18,
                     fontWeight: FontWeight.w500,
                   ),
@@ -72,9 +159,9 @@ class PatientDetailScreen extends StatelessWidget {
               ),
               const Divider(),
               ListTile(
-                title: Text(
+                title: const Text(
                   'Department',
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontSize: 18,
                     fontWeight: FontWeight.w500,
                   ),
@@ -86,9 +173,9 @@ class PatientDetailScreen extends StatelessWidget {
               ),
               const Divider(),
               ListTile(
-                title: Text(
+                title: const Text(
                   'Doctor',
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontSize: 18,
                     fontWeight: FontWeight.w500,
                   ),
@@ -115,7 +202,9 @@ class PatientDetailScreen extends StatelessWidget {
                     ),
                   ),
                   ElevatedButton.icon(
-                    onPressed: () {},
+                    onPressed: () {
+                      _showDeleteDialog(context);
+                    },
                     icon: Icon(Icons.delete),
                     label: Text('Delete'),
                     style: ElevatedButton.styleFrom(

@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:patient_app/models/patient.dart';
+import 'patient_detail_screen.dart';
+import 'package:patient_app/screens/services/api.services.dart';
 
 class AddPatientScreen extends StatefulWidget {
   const AddPatientScreen({Key? key}) : super(key: key);
@@ -9,6 +11,7 @@ class AddPatientScreen extends StatefulWidget {
 }
 
 class _AddPatientScreenState extends State<AddPatientScreen> {
+  final APIService apiService = APIService();
   final _formKey = GlobalKey<FormState>();
   final _patient = Patient(
       firstName: '',
@@ -18,11 +21,42 @@ class _AddPatientScreenState extends State<AddPatientScreen> {
       department: '',
       doctor: '');
 
-  void _submitForm() {
+  void _submitForm() async {
     if (_formKey.currentState!.validate()) {
       _formKey.currentState!.save();
-      // TODO: Add patient to API
-      Navigator.pop(context);
+
+      // final currentContext = context; // store the current context
+
+      Future.delayed(Duration.zero, () async {
+        try {
+          await apiService.addPatient(
+            firstName: _patient.firstName,
+            lastName: _patient.lastName,
+            address: _patient.address,
+            dateOfBirth: _patient.dateOfBirth,
+            department: _patient.department,
+            doctor: _patient.doctor,
+          );
+
+          // ignore: use_build_context_synchronously
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(
+              builder: (context) => PatientDetailScreen(
+                patient: _patient,
+              ),
+            ),
+          );
+        } catch (e) {
+          print('Error adding patient: $e');
+          // Show error message to user
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text('Failed to add patient'),
+            ),
+          );
+        }
+      });
     }
   }
 

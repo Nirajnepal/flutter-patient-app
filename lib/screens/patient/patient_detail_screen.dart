@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../models/patient.dart';
 import 'package:patient_app/screens/services/api.services.dart';
-import 'package:patient_app/screens/patient/patient_lists_screen.dart';
+import 'patient_update_screen.dart';
 
 class PatientDetailScreen extends StatelessWidget {
   final Patient patient;
@@ -70,12 +70,12 @@ class PatientDetailScreen extends StatelessWidget {
                         } else {
                           // Display an error message
                           ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(
+                            const SnackBar(
                                 content: Text("Failed to delete the patient")),
                           );
                         }
                       },
-                      child: Text('Delete'),
+                      child: const Text('Delete'),
                       style: ElevatedButton.styleFrom(
                         primary: Colors.red,
                         textStyle: const TextStyle(
@@ -190,7 +190,17 @@ class PatientDetailScreen extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
                   ElevatedButton.icon(
-                    onPressed: () {},
+                    onPressed: () {
+                      // Navigate to the update screen with the patient data
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => PatientUpdateScreen(
+                            patient: patient,
+                          ),
+                        ),
+                      );
+                    },
                     icon: Icon(Icons.edit),
                     label: Text('Edit'),
                     style: ElevatedButton.styleFrom(

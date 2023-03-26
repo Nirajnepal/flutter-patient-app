@@ -3,7 +3,7 @@ import 'package:http/http.dart' as http;
 import 'package:patient_app/models/patient.dart';
 
 class APIService {
-  static const endpoint = 'http://192.168.0.20:8080/api';
+  static const endpoint = 'http://192.168.2.49:8080/api';
 
   // method to get all patients
   Future<List<Patient>> getPatients() async {
@@ -43,7 +43,7 @@ class APIService {
 
     if (response.statusCode == 201) {
       final dynamic patientJson = json.decode(response.body);
-      print(patientJson);
+      print('Patient: $patientJson');
       return Patient.fromJson(patientJson);
     } else {
       throw Exception('Failed to add patient');
@@ -58,5 +58,37 @@ class APIService {
       throw Exception('Failed to delete patient record');
     }
     return true;
+  }
+
+  // method to update patient
+  Future<Patient> updatePatient({
+    required id,
+    required String firstName,
+    required String lastName,
+    required String address,
+    required String dateOfBirth,
+    required String department,
+    required String doctor,
+  }) async {
+    final url = Uri.parse('$endpoint/patients/$id');
+    final response = await http.patch(
+      url,
+      headers: {'Content-Type': 'application/json'},
+      body: json.encode({
+        'first_name': firstName,
+        'last_name': lastName,
+        'address': address,
+        'date_of_birth': dateOfBirth,
+        'department': department,
+        'doctor': doctor,
+      }),
+    );
+
+    if (response.statusCode == 200) {
+      final dynamic patientJson = json.decode(response.body);
+      return Patient.fromJson(patientJson);
+    } else {
+      throw Exception('Failed to update patient');
+    }
   }
 }

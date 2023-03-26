@@ -28,7 +28,7 @@ class _PatientListScreenState extends State<PatientListScreen> {
               itemCount: patients.length,
               itemBuilder: (context, index) {
                 final patient = patients[index];
-                print('Patient: $patient');
+                //
                 return InkWell(
                   onTap: () {
                     Navigator.push(

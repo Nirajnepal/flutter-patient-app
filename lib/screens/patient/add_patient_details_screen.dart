@@ -29,7 +29,7 @@ class _AddPatientScreenState extends State<AddPatientScreen> {
 
       Future.delayed(Duration.zero, () async {
         try {
-          await apiService.addPatient(
+          Patient addedPatient = await apiService.addPatient(
             firstName: _patient.firstName,
             lastName: _patient.lastName,
             address: _patient.address,
@@ -37,13 +37,14 @@ class _AddPatientScreenState extends State<AddPatientScreen> {
             department: _patient.department,
             doctor: _patient.doctor,
           );
+          // print("$_patient");
 
           // ignore: use_build_context_synchronously
           Navigator.pushReplacement(
             context,
             MaterialPageRoute(
               builder: (context) => PatientDetailScreen(
-                patient: _patient,
+                patient: addedPatient,
               ),
             ),
           );

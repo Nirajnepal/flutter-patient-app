@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:patient_app/models/patient.dart';
 import 'patient_detail_screen.dart';
 import 'package:patient_app/screens/services/api.services.dart';
+import 'package:flutter/services.dart';
 
 class AddPatientScreen extends StatefulWidget {
   const AddPatientScreen({Key? key}) : super(key: key);
@@ -97,8 +98,27 @@ class _AddPatientScreenState extends State<AddPatientScreen> {
                   ),
                   const SizedBox(height: 16.0),
                   TextFormField(
+                    inputFormatters: [
+                      FilteringTextInputFormatter.digitsOnly,
+                      LengthLimitingTextInputFormatter(8),
+                      TextInputFormatter.withFunction((oldValue, newValue) {
+                        final regExp = RegExp(r'^(\d{0,4})(\d{0,2})(\d{0,2})');
+                        final match = regExp.firstMatch(newValue.text);
+                        if (match != null) {
+                          return TextEditingValue(
+                            text:
+                                '${match.group(1)}${match.group(2)?.isNotEmpty == true ? '-${match.group(2)}' : ''}${match.group(3)?.isNotEmpty == true ? '-${match.group(3)}' : ''}',
+                            selection: TextSelection.collapsed(
+                                offset:
+                                    '${match.group(1)}${match.group(2)?.isNotEmpty == true ? '-${match.group(2)}' : ''}${match.group(3)?.isNotEmpty == true ? '-${match.group(3)}' : ''}'
+                                        .length),
+                          );
+                        }
+                        return oldValue;
+                      }),
+                    ],
                     decoration: const InputDecoration(
-                      labelText: 'Date of Birth *',
+                      labelText: 'Date of Birth (YYYY-MM-DD) *',
                       border: OutlineInputBorder(),
                     ),
                     onSaved: (val) =>

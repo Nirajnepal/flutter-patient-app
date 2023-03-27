@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import '../../models/patient.dart';
 import 'package:patient_app/screens/services/api.services.dart';
 import 'patient_update_screen.dart';
+import 'record_screen.dart';
 
 class PatientDetailScreen extends StatelessWidget {
   final Patient patient;
@@ -120,13 +121,41 @@ class PatientDetailScreen extends StatelessWidget {
                 ),
               ),
               const SizedBox(height: 16),
+              const SizedBox(height: 16),
               ListTile(
-                title: Text(
-                  '${patient.firstName} ${patient.lastName}',
-                  style: const TextStyle(
-                    fontSize: 24,
-                    fontWeight: FontWeight.bold,
-                  ),
+                title: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      '${patient.firstName} ${patient.lastName}',
+                      style: const TextStyle(
+                        fontSize: 24,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    ElevatedButton.icon(
+                      onPressed: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => RecordScreen(
+                              userId: patient.id!,
+                              firstName: patient.firstName,
+                            ),
+                          ),
+                        );
+                      },
+                      icon: Icon(Icons.remove_red_eye_sharp),
+                      label: Text('Record'),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Color.fromARGB(255, 27, 176, 245),
+                        textStyle: const TextStyle(
+                          fontSize: 15,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
               ),
               const Divider(),

@@ -1,12 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:patient_app/screens/services/api.services.dart';
 import 'package:patient_app/models/patientrecord.dart';
+import 'package:patient_app/models/patient.dart';
+import 'add_record_sceen.dart';
 
 class RecordScreen extends StatefulWidget {
   final String userId;
   final String firstName;
+  final Patient patient;
 
-  RecordScreen({required this.userId, required this.firstName});
+  RecordScreen(
+      {required this.userId, required this.firstName, required this.patient});
 
   @override
   _RecordScreenState createState() => _RecordScreenState();
@@ -28,6 +32,8 @@ class _RecordScreenState extends State<RecordScreen> {
   String heartbeatRate = '';
   String height = '';
   String weight = '';
+  String userId = '';
+  String firstName = '';
 
   Future<void> getRecord() async {
     setState(() {
@@ -75,6 +81,10 @@ class _RecordScreenState extends State<RecordScreen> {
   void initState() {
     super.initState();
     getRecord();
+    setState(() {
+      userId = widget.userId;
+      firstName = widget.firstName;
+    });
   }
 
   @override
@@ -103,7 +113,7 @@ class _RecordScreenState extends State<RecordScreen> {
                               SizedBox(height: 8.0),
                               TextFormField(
                                 initialValue: nurseName,
-                                decoration: InputDecoration(
+                                decoration: const InputDecoration(
                                   labelText: 'Nurse Name',
                                 ),
                                 validator: (value) {
@@ -119,7 +129,7 @@ class _RecordScreenState extends State<RecordScreen> {
                               SizedBox(height: 8.0),
                               TextFormField(
                                 initialValue: bloodPressure,
-                                decoration: InputDecoration(
+                                decoration: const InputDecoration(
                                   labelText: 'Blood Pressure',
                                 ),
                                 keyboardType: TextInputType.number,
@@ -136,7 +146,7 @@ class _RecordScreenState extends State<RecordScreen> {
                               SizedBox(height: 8.0),
                               TextFormField(
                                 initialValue: bloodOxygenLevel,
-                                decoration: InputDecoration(
+                                decoration: const InputDecoration(
                                   labelText: 'Blood Oxygen Level',
                                 ),
                                 keyboardType: TextInputType.number,
@@ -153,7 +163,7 @@ class _RecordScreenState extends State<RecordScreen> {
                               SizedBox(height: 8.0),
                               TextFormField(
                                 initialValue: heartbeatRate,
-                                decoration: InputDecoration(
+                                decoration: const InputDecoration(
                                   labelText: 'Heartbeat Rate',
                                 ),
                                 keyboardType: TextInputType.number,
@@ -170,7 +180,7 @@ class _RecordScreenState extends State<RecordScreen> {
                               SizedBox(height: 8.0),
                               TextFormField(
                                 initialValue: height,
-                                decoration: InputDecoration(
+                                decoration: const InputDecoration(
                                   labelText: 'Height (in cm)',
                                 ),
                                 keyboardType: TextInputType.number,
@@ -187,7 +197,7 @@ class _RecordScreenState extends State<RecordScreen> {
                               SizedBox(height: 8.0),
                               TextFormField(
                                 initialValue: weight,
-                                decoration: InputDecoration(
+                                decoration: const InputDecoration(
                                   labelText: 'Weight (in kg)',
                                 ),
                                 keyboardType: TextInputType.number,
@@ -226,7 +236,16 @@ class _RecordScreenState extends State<RecordScreen> {
                       if (showAddRecordButton)
                         ElevatedButton(
                           onPressed: () {
-                            // Navigate to the page to add a new record
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => AddRecordScreen(
+                                  userId: userId,
+                                  firstName: firstName,
+                                  patient: widget.patient,
+                                ),
+                              ),
+                            );
                           },
                           child: const Text('Add Record'),
                         ),

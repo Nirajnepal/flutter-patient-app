@@ -141,6 +141,7 @@ class PatientDetailScreen extends StatelessWidget {
                             builder: (context) => RecordScreen(
                               userId: patient.id!,
                               firstName: patient.firstName,
+                              patient: patient,
                             ),
                           ),
                         );

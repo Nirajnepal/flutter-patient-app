@@ -132,7 +132,8 @@ class APIService {
   }) async {
     final response = await http.post(
       Uri.parse('$endpoint/patients/$id/records'),
-      body: {
+      headers: {'Content-Type': 'application/json'},
+      body: json.encode({
         'date': date,
         'nurse_name': nurseName,
         'blood_pressure': bloodPressure.toString(),
@@ -140,9 +141,9 @@ class APIService {
         'heartbeat_rate': heartbeatRate.toString(),
         'height': height.toString(),
         'weight': weight.toString(),
-      },
+      }),
     );
-
+    print(response.body);
     if (response.statusCode == 201) {
       final responseBody = json.decode(response.body);
       return responseBody;

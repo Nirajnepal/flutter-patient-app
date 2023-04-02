@@ -3,7 +3,7 @@ import 'package:http/http.dart' as http;
 import 'package:patient_app/models/patient.dart';
 
 class APIService {
-  static const endpoint = 'http://192.168.2.49:8080/api';
+  static const endpoint = 'http://192.168.0.20:8080/api';
 
   // method to get all patients
   Future<List<Patient>> getPatients() async {
@@ -157,26 +157,27 @@ class APIService {
     required String id,
     String? date,
     String? nurseName,
-    double? bloodPressure,
-    double? bloodOxygenLevel,
-    double? heartbeatRate,
-    double? height,
-    double? weight,
+    String? bloodPressure,
+    String? bloodOxygenLevel,
+    String? heartbeatRate,
+    String? height,
+    String? weight,
   }) async {
+    print('$endpoint/patients/$id/records');
     final response = await http.patch(
       Uri.parse('$endpoint/patients/$id/records'),
-      body: {
-        if (date != null) 'date': date,
-        if (nurseName != null) 'nurse_name': nurseName,
-        if (bloodPressure != null) 'blood_pressure': bloodPressure.toString(),
-        if (bloodOxygenLevel != null)
-          'blood_oxygen_level': bloodOxygenLevel.toString(),
-        if (heartbeatRate != null) 'heartbeat_rate': heartbeatRate.toString(),
-        if (height != null) 'height': height.toString(),
-        if (weight != null) 'weight': weight.toString(),
-      },
+      headers: {'Content-Type': 'application/json'},
+      body: json.encode({
+        'date': date,
+        'nurse_name': nurseName,
+        'blood_pressure': bloodPressure.toString(),
+        'blood_oxygen_level': bloodOxygenLevel.toString(),
+        'heartbeat_rate': heartbeatRate.toString(),
+        'height': height.toString(),
+        'weight': weight.toString(),
+      }),
     );
-
+    print(response);
     if (response.statusCode == 200) {
       final responseBody = json.decode(response.body);
       return responseBody;

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:patient_app/models/patientrecord.dart';
 import 'package:patient_app/models/patient.dart';
+import 'package:patient_app/screens/patient/patient_detail_screen.dart';
 import 'package:patient_app/screens/services/api.services.dart';
 import 'package:flutter/services.dart';
 import 'record_screen.dart';
@@ -33,7 +34,6 @@ class _AddRecordScreenState extends State<AddRecordScreen> {
   void _submitForm() async {
     if (_formKey.currentState!.validate()) {
       _formKey.currentState!.save();
-      print(patientRecord);
 
       setState(() {
         isLoading = true;
@@ -52,17 +52,13 @@ class _AddRecordScreenState extends State<AddRecordScreen> {
         );
 
         // ignore: use_build_context_synchronously
-        Navigator.pushAndRemoveUntil(
-          context,
-          MaterialPageRoute(
-            builder: (context) => RecordScreen(
-              userId: widget.userId,
-              firstName: widget.firstName,
-              patient: widget.patient,
-            ),
-          ),
-          (route) => false, // Remove all previous routes from the stack
-        );
+        Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => PatientDetailScreen(
+                patient: widget.patient,
+              ),
+            ));
       } catch (e) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(

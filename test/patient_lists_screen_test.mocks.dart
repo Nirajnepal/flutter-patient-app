@@ -187,11 +187,11 @@ class MockAPIService extends _i1.Mock implements _i3.APIService {
     required String? id,
     String? date,
     String? nurseName,
-    double? bloodPressure,
-    double? bloodOxygenLevel,
-    double? heartbeatRate,
-    double? height,
-    double? weight,
+    String? bloodPressure,
+    String? bloodOxygenLevel,
+    String? heartbeatRate,
+    String? height,
+    String? weight,
   }) =>
       (super.noSuchMethod(
         Invocation.method(

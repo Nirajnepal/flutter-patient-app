@@ -75,8 +75,8 @@ class _PatientListScreenState extends State<PatientListScreen> {
               },
             );
           } else if (snapshot.hasError) {
-            return const Center(
-              child: Text('No Patient Data'),
+            return Center(
+              child: Text('${snapshot.error}'),
             );
           } else {
             return const Center(

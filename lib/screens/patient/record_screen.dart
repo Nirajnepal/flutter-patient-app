@@ -2,9 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:patient_app/screens/services/api.services.dart';
 import 'package:patient_app/models/patientrecord.dart';
 import 'package:patient_app/models/patient.dart';
-import 'package:patient_app/screens/patient/add_record_screen.dart';
-import 'package:flutter/services.dart';
-import 'patient_detail_screen.dart';
+import 'add_record_sceen.dart';
 
 class RecordScreen extends StatefulWidget {
   final String userId;
@@ -19,7 +17,7 @@ class RecordScreen extends StatefulWidget {
 }
 
 class _RecordScreenState extends State<RecordScreen> {
-  final _formKey = GlobalKey<FormState>();
+  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
   final APIService apiService = APIService();
   bool isLoading = true;
@@ -52,7 +50,6 @@ class _RecordScreenState extends State<RecordScreen> {
         nurseName = record?.nurseName ?? '';
         bloodPressure = record?.bloodPressure ?? '';
         bloodOxygenLevel = record?.bloodOxygenLevel ?? '';
-        date = record?.date ?? '';
         heartbeatRate = record?.heartbeatRate ?? '';
         height = record?.height ?? '';
         weight = record?.weight ?? '';
@@ -80,70 +77,6 @@ class _RecordScreenState extends State<RecordScreen> {
     }
   }
 
-  void _submitForm() async {
-    if (_formKey.currentState!.validate()) {
-      _formKey.currentState!.save();
-
-      setState(() {
-        isLoading = true;
-      });
-      try {
-        await apiService.updatePatientRecord(
-          id: widget.userId,
-          date: date,
-          nurseName: nurseName,
-          bloodPressure: bloodPressure,
-          bloodOxygenLevel: bloodOxygenLevel,
-          heartbeatRate: heartbeatRate,
-          height: height,
-          weight: weight,
-        );
-
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Record saved successfully.'),
-          ),
-        );
-
-        setState(() {
-          isLoading = false;
-          hasRecord = true;
-          showAddRecordButton = false;
-        });
-      } catch (e) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Failed to save record. Please try again later.'),
-          ),
-        );
-        setState(() {
-          isLoading = false;
-        });
-      }
-    }
-  }
-
-  void _deleteRecord() async {
-    try {
-      await apiService.deletePatientRecord(widget.userId);
-
-      // ignore: use_build_context_synchronously
-      Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (context) => PatientDetailScreen(
-              patient: widget.patient,
-            ),
-          ));
-    } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Failed to delete record. Please try again later.'),
-        ),
-      );
-    }
-  }
-
   @override
   void initState() {
     super.initState();
@@ -165,7 +98,6 @@ class _RecordScreenState extends State<RecordScreen> {
           : hasRecord
               ? SingleChildScrollView(
                   child: Form(
-                    key: _formKey,
                     child: SingleChildScrollView(
                       child: Card(
                         margin: EdgeInsets.all(16.0),
@@ -174,19 +106,9 @@ class _RecordScreenState extends State<RecordScreen> {
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.stretch,
                             children: [
-                              Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                children: [
-                                  Text(
-                                    'Patient Name: ${widget.firstName}',
-                                    style: TextStyle(fontSize: 18.0),
-                                  ),
-                                  IconButton(
-                                      icon:
-                                          Icon(Icons.delete, color: Colors.red),
-                                      onPressed: _deleteRecord),
-                                ],
+                              Text(
+                                'Patient Name: ${widget.firstName}',
+                                style: TextStyle(fontSize: 18.0),
                               ),
                               SizedBox(height: 8.0),
                               TextFormField(
@@ -194,49 +116,14 @@ class _RecordScreenState extends State<RecordScreen> {
                                 decoration: const InputDecoration(
                                   labelText: 'Nurse Name',
                                 ),
-                                validator: (val) => val!.isEmpty
-                                    ? 'Nurse name is required'
-                                    : null,
-                                onChanged: (val) {
-                                  setState(() {
-                                    nurseName = val;
-                                  });
+                                validator: (value) {
+                                  if (value == null || value.isEmpty) {
+                                    return 'Please enter nurse name';
+                                  }
+                                  return null;
                                 },
-                              ),
-                              TextFormField(
-                                inputFormatters: [
-                                  FilteringTextInputFormatter.digitsOnly,
-                                  LengthLimitingTextInputFormatter(8),
-                                  TextInputFormatter.withFunction(
-                                      (oldValue, newValue) {
-                                    final regExp =
-                                        RegExp(r'^(\d{0,4})(\d{0,2})(\d{0,2})');
-                                    final match =
-                                        regExp.firstMatch(newValue.text);
-                                    if (match != null) {
-                                      return TextEditingValue(
-                                        text:
-                                            '${match.group(1)}${match.group(2)?.isNotEmpty == true ? '-${match.group(2)}' : ''}${match.group(3)?.isNotEmpty == true ? '-${match.group(3)}' : ''}',
-                                        selection: TextSelection.collapsed(
-                                            offset:
-                                                '${match.group(1)}${match.group(2)?.isNotEmpty == true ? '-${match.group(2)}' : ''}${match.group(3)?.isNotEmpty == true ? '-${match.group(3)}' : ''}'
-                                                    .length),
-                                      );
-                                    }
-                                    return oldValue;
-                                  }),
-                                ],
-                                initialValue: date,
-                                decoration: const InputDecoration(
-                                  labelText: 'Date (YYYY-MM-DD) *',
-                                ),
-                                keyboardType: TextInputType.number,
-                                validator: (val) =>
-                                    val!.isEmpty ? 'Date is required' : null,
-                                onChanged: (val) {
-                                  setState(() {
-                                    date = val;
-                                  });
+                                onSaved: (value) {
+                                  nurseName = value ?? '';
                                 },
                               ),
                               SizedBox(height: 8.0),
@@ -246,13 +133,14 @@ class _RecordScreenState extends State<RecordScreen> {
                                   labelText: 'Blood Pressure',
                                 ),
                                 keyboardType: TextInputType.number,
-                                validator: (val) => val!.isEmpty
-                                    ? 'Blood Pressure is required'
-                                    : null,
-                                onChanged: (val) {
-                                  setState(() {
-                                    bloodPressure = val;
-                                  });
+                                validator: (value) {
+                                  if (value == null || value.isEmpty) {
+                                    return 'Please enter blood pressure';
+                                  }
+                                  return null;
+                                },
+                                onSaved: (value) {
+                                  bloodPressure = value ?? '';
                                 },
                               ),
                               SizedBox(height: 8.0),
@@ -262,10 +150,15 @@ class _RecordScreenState extends State<RecordScreen> {
                                   labelText: 'Blood Oxygen Level',
                                 ),
                                 keyboardType: TextInputType.number,
-                                validator: (val) => val!.isEmpty
-                                    ? 'Blood Oxygen Level is required'
-                                    : null,
-                                onSaved: (val) => bloodOxygenLevel = val!,
+                                validator: (value) {
+                                  if (value == null || value.isEmpty) {
+                                    return 'Please enter blood oxygen level';
+                                  }
+                                  return null;
+                                },
+                                onSaved: (value) {
+                                  bloodOxygenLevel = value ?? '';
+                                },
                               ),
                               SizedBox(height: 8.0),
                               TextFormField(
@@ -274,10 +167,15 @@ class _RecordScreenState extends State<RecordScreen> {
                                   labelText: 'Heartbeat Rate',
                                 ),
                                 keyboardType: TextInputType.number,
-                                validator: (val) => val!.isEmpty
-                                    ? 'Heartbeat Rate is required'
-                                    : null,
-                                onSaved: (val) => heartbeatRate = val!,
+                                validator: (value) {
+                                  if (value == null || value.isEmpty) {
+                                    return 'Please enter heartbeat rate';
+                                  }
+                                  return null;
+                                },
+                                onSaved: (value) {
+                                  heartbeatRate = value ?? '';
+                                },
                               ),
                               SizedBox(height: 8.0),
                               TextFormField(
@@ -286,9 +184,15 @@ class _RecordScreenState extends State<RecordScreen> {
                                   labelText: 'Height (in cm)',
                                 ),
                                 keyboardType: TextInputType.number,
-                                validator: (val) =>
-                                    val!.isEmpty ? 'Height is required' : null,
-                                onSaved: (val) => height = val!,
+                                validator: (value) {
+                                  if (value == null || value.isEmpty) {
+                                    return 'Please enter height';
+                                  }
+                                  return null;
+                                },
+                                onSaved: (value) {
+                                  height = value ?? '';
+                                },
                               ),
                               SizedBox(height: 8.0),
                               TextFormField(
@@ -297,36 +201,25 @@ class _RecordScreenState extends State<RecordScreen> {
                                   labelText: 'Weight (in kg)',
                                 ),
                                 keyboardType: TextInputType.number,
-                                validator: (val) =>
-                                    val!.isEmpty ? 'Weight is required' : null,
-                                onSaved: (val) => weight = val!,
+                                validator: (value) {
+                                  if (value == null || value.isEmpty) {
+                                    return 'Please enter weight';
+                                  }
+                                  return null;
+                                },
+                                onSaved: (value) {
+                                  weight = value ?? '';
+                                },
                               ),
-                              const SizedBox(height: 32.0),
-                              Center(
-                                child: ElevatedButton(
-                                  onPressed: _submitForm,
-                                  style: ElevatedButton.styleFrom(
-                                    backgroundColor: Colors.green,
-                                    padding: const EdgeInsets.symmetric(
-                                        vertical: 16, horizontal: 24),
-                                  ),
-                                  child: Row(
-                                    mainAxisSize: MainAxisSize.min,
-                                    children: const [
-                                      Icon(Icons.edit_document,
-                                          color: Colors.white),
-                                      SizedBox(width: 10),
-                                      Text(
-                                        'Update Record',
-                                        style: TextStyle(
-                                          color: Colors.white,
-                                          fontSize: 16,
-                                          fontWeight: FontWeight.bold,
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ),
+                              SizedBox(height: 24.0),
+                              ElevatedButton(
+                                onPressed: () {
+                                  if (_formKey.currentState!.validate()) {
+                                    _formKey.currentState!.save();
+                                    _submitForm();
+                                  }
+                                },
+                                child: Text('Save'),
                               ),
                             ],
                           ),
@@ -360,5 +253,9 @@ class _RecordScreenState extends State<RecordScreen> {
                   ),
                 ),
     );
+  }
+
+  void _submitForm() {
+    // TODO: Implement form submission logic
   }
 }

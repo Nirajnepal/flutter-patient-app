@@ -108,7 +108,7 @@ class PatientDetailScreen extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Container(
-                height: 180,
+                height: 200,
                 child: Center(
                   child: CircleAvatar(
                     radius: 60,

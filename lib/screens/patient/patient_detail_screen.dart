@@ -3,6 +3,7 @@ import '../../models/patient.dart';
 import 'package:patient_app/screens/services/api.services.dart';
 import 'patient_update_screen.dart';
 import 'record_screen.dart';
+import 'patient_lists_screen.dart';
 
 class PatientDetailScreen extends StatelessWidget {
   final Patient patient;
@@ -67,7 +68,13 @@ class PatientDetailScreen extends StatelessWidget {
 
                         if (result == true) {
                           // Navigate back to the patient list screen
-                          Navigator.popUntil(context, ModalRoute.withName('/'));
+                          // ignore: use_build_context_synchronously
+                          Navigator.of(context).pushAndRemoveUntil(
+                            MaterialPageRoute(
+                              builder: (context) => const PatientListScreen(),
+                            ),
+                            (Route<dynamic> route) => route.isFirst,
+                          );
                         } else {
                           // Display an error message
                           ScaffoldMessenger.of(context).showSnackBar(
@@ -222,7 +229,7 @@ class PatientDetailScreen extends StatelessWidget {
                   ElevatedButton.icon(
                     onPressed: () {
                       // Navigate to the update screen with the patient data
-                      Navigator.push(
+                      Navigator.pushReplacement(
                         context,
                         MaterialPageRoute(
                           builder: (context) => PatientUpdateScreen(

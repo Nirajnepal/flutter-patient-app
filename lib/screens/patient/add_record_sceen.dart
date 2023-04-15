@@ -52,7 +52,7 @@ class _AddRecordScreenState extends State<AddRecordScreen> {
         );
 
         // ignore: use_build_context_synchronously
-        Navigator.push(
+        Navigator.pushReplacement(
             context,
             MaterialPageRoute(
               builder: (context) => PatientDetailScreen(

@@ -343,15 +343,16 @@ class _RecordScreenState extends State<RecordScreen> {
                       if (showAddRecordButton)
                         ElevatedButton(
                           onPressed: () {
-                            Navigator.push(
+                            Navigator.pushAndRemoveUntil(
                               context,
                               MaterialPageRoute(
                                 builder: (context) => AddRecordScreen(
-                                  userId: userId,
-                                  firstName: firstName,
+                                  userId: widget.userId,
+                                  firstName: widget.firstName,
                                   patient: widget.patient,
                                 ),
                               ),
+                              (Route<dynamic> route) => route.isFirst,
                             );
                           },
                           child: const Text('Add Record'),

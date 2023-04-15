@@ -3,7 +3,7 @@ import 'package:http/http.dart' as http;
 import 'package:patient_app/models/patient.dart';
 
 class APIService {
-  static const endpoint = 'http://192.168.0.20:8080/api';
+  static const endpoint = 'http://192.168.2.49:8080/api';
 
   // method to get all patients
   Future<List<Patient>> getPatients() async {

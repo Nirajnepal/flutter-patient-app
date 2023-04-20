@@ -124,11 +124,11 @@ class APIService {
     required String id,
     required String date,
     required String nurseName,
-    required double bloodPressure,
-    required double bloodOxygenLevel,
-    required double heartbeatRate,
-    required double height,
-    required double weight,
+    required String bloodPressure,
+    required String bloodOxygenLevel,
+    required String heartbeatRate,
+    required String height,
+    required String weight,
   }) async {
     final response = await http.post(
       Uri.parse('$endpoint/patients/$id/records'),
@@ -143,7 +143,7 @@ class APIService {
         'weight': weight.toString(),
       }),
     );
-    print(response.body);
+    print(response);
     if (response.statusCode == 201) {
       final responseBody = json.decode(response.body);
       return responseBody;

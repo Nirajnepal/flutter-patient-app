@@ -12,15 +12,31 @@ class PatientListScreen extends StatefulWidget {
 
 class _PatientListScreenState extends State<PatientListScreen> {
   final APIService apiService = APIService();
+  late Future<List<Patient>> _patientsFuture;
+
+  @override
+  void initState() {
+    super.initState();
+    _fetchPatients();
+  }
+
+  void _fetchPatients() {
+    _patientsFuture = apiService.getPatients();
+  }
 
   @override
   Widget build(BuildContext context) {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      setState(() {
+        _fetchPatients();
+      });
+    });
     return Scaffold(
       appBar: AppBar(
         title: const Text('Patient List'),
       ),
       body: FutureBuilder<List<Patient>>(
-        future: apiService.getPatients(),
+        future: _patientsFuture,
         builder: (context, snapshot) {
           if (snapshot.hasData) {
             final patients = snapshot.data!;
@@ -69,6 +85,13 @@ class _PatientListScreenState extends State<PatientListScreen> {
                           const SizedBox(height: 8),
                         ],
                       ),
+                      trailing: patient.critical == true
+                          ? const Icon(
+                              Icons.warning,
+                              color: Colors.red,
+                              size: 32,
+                            )
+                          : null,
                     ),
                   ),
                 );

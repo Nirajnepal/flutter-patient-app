@@ -6,6 +6,7 @@ class Patient {
   String dateOfBirth;
   String department;
   String doctor;
+  bool? critical;
 
   Patient({
     this.id,
@@ -15,6 +16,7 @@ class Patient {
     required this.dateOfBirth,
     required this.department,
     required this.doctor,
+    this.critical,
   });
 
   factory Patient.fromJson(Map<String, dynamic> json) {
@@ -26,6 +28,7 @@ class Patient {
       dateOfBirth: json['date_of_birth'],
       department: json['department'],
       doctor: json['doctor'],
+      critical: json['critical'],
     );
   }
 
@@ -38,11 +41,12 @@ class Patient {
       'date_of_birth': dateOfBirth,
       'department': department,
       'doctor': doctor,
+      'critical': critical,
     };
   }
 
   @override
   String toString() {
-    return 'Patient: { _id: $id, $firstName, lastName: $lastName, dateOfBirth: $dateOfBirth, address: $address, department: $department, doctor: $doctor }';
+    return 'Patient: { _id: $id, firstName: $firstName, lastName: $lastName, dateOfBirth: $dateOfBirth, address: $address, department: $department, doctor: $doctor, critical: $critical }';
   }
 }

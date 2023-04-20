@@ -44,11 +44,11 @@ class _AddRecordScreenState extends State<AddRecordScreen> {
           id: widget.userId,
           date: patientRecord.date,
           nurseName: patientRecord.nurseName,
-          bloodPressure: double.parse(patientRecord.bloodPressure),
-          bloodOxygenLevel: double.parse(patientRecord.bloodOxygenLevel),
-          heartbeatRate: double.parse(patientRecord.heartbeatRate),
-          height: double.parse(patientRecord.height),
-          weight: double.parse(patientRecord.weight),
+          bloodPressure: patientRecord.bloodPressure,
+          bloodOxygenLevel: patientRecord.bloodOxygenLevel,
+          heartbeatRate: patientRecord.heartbeatRate,
+          height: patientRecord.height,
+          weight: patientRecord.weight,
         );
 
         // ignore: use_build_context_synchronously
@@ -143,26 +143,31 @@ class _AddRecordScreenState extends State<AddRecordScreen> {
                               ),
                               SizedBox(height: 8.0),
                               TextFormField(
-                                initialValue: patientRecord.bloodPressure,
                                 decoration: const InputDecoration(
-                                  labelText: 'Blood Pressure *',
+                                  labelText: 'Blood Pressure',
                                 ),
-                                keyboardType: TextInputType.number,
-                                validator: (value) {
-                                  if (value == null || value.isEmpty) {
-                                    return 'Please enter blood pressure';
+                                keyboardType: TextInputType.text,
+                                validator: (val) {
+                                  if (val!.isEmpty) {
+                                    return 'Blood Pressure is required';
+                                  } else {
+                                    // Regular expression pattern to match "120/80" format
+                                    RegExp pattern =
+                                        RegExp(r'^\d{1,3}\/\d{1,3}$');
+                                    if (!pattern.hasMatch(val)) {
+                                      return 'Blood Pressure must be in the format "120/80"';
+                                    }
                                   }
                                   return null;
                                 },
-                                onSaved: (value) {
-                                  patientRecord.bloodPressure = value ?? '';
-                                },
+                                onSaved: (val) => setState(
+                                    () => patientRecord.bloodPressure = val!),
                               ),
                               SizedBox(height: 8.0),
                               TextFormField(
                                 initialValue: patientRecord.bloodOxygenLevel,
                                 decoration: const InputDecoration(
-                                  labelText: 'Blood Oxygen Level *',
+                                  labelText: 'Blood Oxygen Level (%)*',
                                 ),
                                 keyboardType: TextInputType.number,
                                 validator: (value) {
@@ -179,7 +184,7 @@ class _AddRecordScreenState extends State<AddRecordScreen> {
                               TextFormField(
                                 initialValue: patientRecord.heartbeatRate,
                                 decoration: const InputDecoration(
-                                  labelText: 'Heartbeat Rate *',
+                                  labelText: 'Heartbeat Rate (per minute) *',
                                 ),
                                 keyboardType: TextInputType.number,
                                 validator: (value) {

@@ -245,10 +245,20 @@ class _RecordScreenState extends State<RecordScreen> {
                                 decoration: const InputDecoration(
                                   labelText: 'Blood Pressure',
                                 ),
-                                keyboardType: TextInputType.number,
-                                validator: (val) => val!.isEmpty
-                                    ? 'Blood Pressure is required'
-                                    : null,
+                                keyboardType: TextInputType.text,
+                                validator: (val) {
+                                  if (val!.isEmpty) {
+                                    return 'Blood Pressure is required';
+                                  } else {
+                                    // Regular expression pattern to match "120/80" format
+                                    RegExp pattern =
+                                        RegExp(r'^\d{1,3}\/\d{1,3}$');
+                                    if (!pattern.hasMatch(val)) {
+                                      return 'Blood Pressure must be in the format "120/80"';
+                                    }
+                                  }
+                                  return null;
+                                },
                                 onChanged: (val) {
                                   setState(() {
                                     bloodPressure = val;
@@ -259,7 +269,7 @@ class _RecordScreenState extends State<RecordScreen> {
                               TextFormField(
                                 initialValue: bloodOxygenLevel,
                                 decoration: const InputDecoration(
-                                  labelText: 'Blood Oxygen Level',
+                                  labelText: 'Blood Oxygen Level (%)',
                                 ),
                                 keyboardType: TextInputType.number,
                                 validator: (val) => val!.isEmpty
@@ -271,7 +281,7 @@ class _RecordScreenState extends State<RecordScreen> {
                               TextFormField(
                                 initialValue: heartbeatRate,
                                 decoration: const InputDecoration(
-                                  labelText: 'Heartbeat Rate',
+                                  labelText: 'Heartbeat Rate (per minute)',
                                 ),
                                 keyboardType: TextInputType.number,
                                 validator: (val) => val!.isEmpty
